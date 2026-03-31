@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nirnay: Decision Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --saffron: #E05C1A;
+  --saffron-2: #F2834A;
+  --saffron-pale: #FDF0E8;
+  --ink: #0F1623;
+  --ink-2: #1E2D45;
+  --ink-3: #2E4060;
+  --mist: #F4F6FA;
+  --mist-2: #E8ECF4;
+  --slate: #6B7A99;
+  --slate-2: #8A97B4;
+  --white: #FFFFFF;
+  --green: #0E7A4E;
+  --green-pale: #E4F5EE;
+  --border: rgba(15,22,35,0.08);
+  --border-2: rgba(15,22,35,0.14);
+  --shadow-sm: 0 1px 4px rgba(15,22,35,0.06), 0 4px 16px rgba(15,22,35,0.04);
+  --shadow-md: 0 4px 16px rgba(15,22,35,0.08), 0 12px 40px rgba(15,22,35,0.06);
+  --shadow-lg: 0 8px 32px rgba(15,22,35,0.10), 0 24px 64px rgba(15,22,35,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── PAGE ROUTER ─── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── MANDALA SVG TEXTURE ─── */
+.mandala-bg {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  height: 64px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}
+
+.logo-text span { color: var(--saffron); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--slate);
+  text-decoration: none;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.nav-links a:hover { color: var(--ink); }
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px solid var(--border-2);
+}
+
+.btn-ghost:hover { background: var(--mist); }
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.btn-primary:hover { background: var(--ink-2); transform: translateY(-1px); }
+
+.btn-accent {
+  background: var(--saffron);
+  color: var(--white);
+}
+
+.btn-accent:hover { background: #c4511a; transform: translateY(-1px); }
+
+.btn-lg {
+  font-size: 15px;
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+}
+
+.btn-xl {
+  font-size: 16px;
+  padding: 0.9rem 2.2rem;
+  border-radius: 10px;
+}
+
+/* ═══════════════════════════════
+   HOMEPAGE
+═══════════════════════════════ */
+#home {
+  min-height: 100vh;
+}
+
+/* HERO */
+.hero {
+  padding: 140px 3rem 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.hero-left { position: relative; z-index: 2; }
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--saffron-pale);
+  border: 1px solid rgba(224,92,26,0.2);
+  color: var(--saffron);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 5px 14px 5px 10px;
+  border-radius: 100px;
+  margin-bottom: 1.75rem;
+}
+
+.pill-dot {
+  width: 6px; height: 6px;
+  background: var(--saffron);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.6); }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--saffron);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--slate);
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 440px;
+  margin-bottom: 2.25rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 3px;
+}
+
+/* Hero visual */
+.hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.card-title-sm {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.badge-green { background: var(--green-pale); color: var(--green); }
+.badge-orange { background: var(--saffron-pale); color: var(--saffron); }
+
+.insight-rows { display: flex; flex-direction: column; gap: 10px; }
+
+.insight-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--mist);
+  border-radius: 10px;
+}
+
+.insight-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--mist-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.insight-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.bar-saffron { background: var(--saffron); }
+.bar-blue { background: #3A7BF7; }
+.bar-green { background: var(--green); }
+
+.insight-pct {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  min-width: 36px;
+  text-align: right;
+}
+
+.insight-label {
+  font-size: 12px;
+  color: var(--slate);
+  min-width: 72px;
+}
+
+.floating-tag {
+  position: absolute;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.tag-top-right {
+  top: -18px;
+  right: 20px;
+  animation: float-1 3s ease-in-out infinite;
+}
+
+.tag-bottom-left {
+  bottom: -18px;
+  left: 16px;
+  animation: float-2 3.5s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes float-2 {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* MARQUEE */
+.marquee-section {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+  overflow: hidden;
+  background: var(--mist);
+}
+
+.marquee-inner {
+  display: flex;
+  gap: 3rem;
+  animation: marquee 22s linear infinite;
+  width: max-content;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate);
+  white-space: nowrap;
+}
+
+.marquee-dot { width: 4px; height: 4px; background: var(--saffron-2); border-radius: 50%; }
+
+/* FEATURES */
+.features-section {
+  padding: 6rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  max-width: 480px;
+  margin-bottom: 4rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.feat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s, box-shadow 0.22s;
+}
+
+.feat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.feat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+
+.feat-card:hover::after { opacity: 1; }
+
+.feat-card-1::after { background: var(--saffron); }
+.feat-card-2::after { background: #3A7BF7; }
+.feat-card-3::after { background: var(--green); }
+
+.feat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--slate-2);
+  margin-bottom: 1.25rem;
+}
+
+.feat-icon-wrap {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-size: 20px;
+}
+
+.feat-icon-1 { background: var(--saffron-pale); }
+.feat-icon-2 { background: #EEF3FF; }
+.feat-icon-3 { background: var(--green-pale); }
+
+.feat-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+}
+
+.feat-card p {
+  font-size: 0.875rem;
+  color: var(--slate);
+  line-height: 1.65;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}
+
+.feat-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.feat-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--mist);
+  color: var(--slate);
+}
+
+/* FLOW */
+.flow-section {
+  background: var(--ink);
+  padding: 4rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  position: relative;
+  z-index: 2;
+}
+
+.flow-item {
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.flow-item:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.2);
+  font-size: 22px;
+  z-index: 1;
+}
+
+.flow-step-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--saffron-2);
+  margin-bottom: 0.75rem;
+}
+
+.flow-item h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+}
+
+.flow-item p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* CTA SECTION */
+.cta-section {
+  padding: 6rem 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  font-size: 1rem;
+  color: var(--slate);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-note {
+  font-size: 13px;
+  color: var(--slate-2);
+}
+
+.footer-devanagari {
+  font-size: 13px;
+  color: var(--slate-2);
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════
+   AUTH PAGE
+═══════════════════════════════ */
+#auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.auth-left {
+  background: var(--ink);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-left-content {
+  position: relative;
+  z-index: 2;
+  margin-top: 4rem;
+}
+
+.auth-quote {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  margin-bottom: 1.5rem;
+}
+
+.auth-quote em {
+  color: var(--saffron-2);
+  font-style: normal;
+}
+
+.auth-quote-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.45);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.auth-features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 300;
+}
+
+.auth-feature-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Auth right */
+.auth-right {
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--mist);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--slate);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.auth-tab.active {
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+
+.auth-form-sub {
+  font-size: 0.875rem;
+  color: var(--slate);
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border-2);
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.form-input:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(224,92,26,0.1);
+}
+
+.form-input::placeholder { color: var(--slate-2); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.forgot-link {
+  float: right;
+  font-size: 12px;
+  color: var(--saffron);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+.form-submit {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+  margin-top: 0.5rem;
+}
+
+.form-submit:hover { background: var(--ink-2); transform: translateY(-1px); }
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.25rem 0;
+}
+
+.form-divider-line { flex: 1; height: 1px; background: var(--border); }
+.form-divider-text { font-size: 12px; color: var(--slate-2); white-space: nowrap; }
+
+.social-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.7rem;
+  border: 1px solid var(--border-2);
+  border-radius: 9px;
+  background: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-bottom: 10px;
+}
+
+.social-btn:hover { background: var(--mist); }
+
+.auth-switch {
+  text-align: center;
+  font-size: 13px;
+  color: var(--slate);
+  margin-top: 1.5rem;
+}
+
+.auth-switch a {
+  color: var(--saffron);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════
+   DECISION TREE PAGE
+═══════════════════════════════ */
+#tree-page {
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+.tree-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+}
+
+.tree-title-area { display: flex; flex-direction: column; gap: 2px; }
+
+.tree-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tree-subtitle { font-size: 12px; color: var(--slate); }
+
+.tree-actions { display: flex; gap: 8px; align-items: center; }
+
+.tree-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 280px;
+  height: calc(100vh - 64px - 60px);
+}
+
+/* Left panel */
+.tree-panel-left {
+  border-right: 1px solid var(--border);
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: var(--mist);
+}
+
+.panel-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 0.75rem;
+  padding-left: 4px;
+}
+
+.node-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.palette-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.18s;
+  user-select: none;
+}
+
+.palette-node:hover { border-color: var(--saffron); background: var(--saffron-pale); }
+
+.palette-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-decision { background: #3A7BF7; }
+.dot-chance { background: var(--saffron); }
+.dot-outcome { background: var(--green); }
+
+/* Canvas */
+.tree-canvas-wrap {
+  position: relative;
+  overflow: auto;
+  background: var(--mist);
+  background-image:
+    radial-gradient(circle, rgba(15,22,35,0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+#tree-canvas-svg {
+  width: 100%;
+  min-width: 700px;
+  height: 100%;
+  min-height: 600px;
+}
+
+/* Right panel */
+.tree-panel-right {
+  border-left: 1px solid var(--border);
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: var(--white);
+}
+
+.node-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 10px;
+  color: var(--slate-2);
+  font-size: 13px;
+  text-align: center;
+}
+
+.node-detail-icon { font-size: 32px; opacity: 0.4; }
+
+.node-detail-panel { display: none; }
+.node-detail-panel.show { display: block; }
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+.detail-label:first-child { margin-top: 0; }
+
+.detail-value {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.detail-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-2);
+  border-radius: 7px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+}
+
+.detail-input:focus { border-color: var(--saffron); }
+
+.ev-display {
+  background: var(--mist);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.ev-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.ev-row:last-child { border-bottom: none; }
+
+.ev-row-label { color: var(--slate); }
+.ev-row-val { font-weight: 500; color: var(--ink); }
+.ev-row-val.highlight { color: var(--saffron); font-family: 'Syne', sans-serif; font-size: 14px; }
+
+/* Tree status bar */
+.tree-status {
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 12px;
+  color: var(--slate);
+  background: var(--white);
+}
+
+.status-item { display: flex; align-items: center; gap: 6px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* SVG tree nodes */
+.tree-node-decision { fill: #EEF3FF; stroke: #3A7BF7; stroke-width: 1.5; cursor: pointer; }
+.tree-node-chance { fill: var(--saffron-pale); stroke: var(--saffron); stroke-width: 1.5; cursor: pointer; }
+.tree-node-outcome { fill: var(--green-pale); stroke: var(--green); stroke-width: 1.5; cursor: pointer; }
+.tree-node-selected { stroke-width: 2.5; filter: drop-shadow(0 0 6px rgba(224,92,26,0.25)); }
+.tree-edge { stroke: rgba(15,22,35,0.18); stroke-width: 1.5; fill: none; }
+.tree-edge-label { font-family: 'DM Sans', sans-serif; font-size: 11px; fill: var(--slate); }
+.tree-node-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.tree-node-sublabel { font-family: 'DM Sans', sans-serif; font-size: 9.5px; fill: var(--slate); text-anchor: middle; pointer-events: none; }
+.tree-payoff-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; fill: var(--green); text-anchor: start; }
+.tree-payoff-bg { fill: var(--green-pale); rx: 4; }
+.tree-optimal-edge { stroke: var(--saffron); stroke-width: 2.5; stroke-dasharray: none; }
+
+/* ─── MANDALA DECORATIONS ─── */
+.mandala-hero {
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 340px;
+  height: 340px;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.mandala-auth {
+  position: absolute;
+  bottom: -40px;
+  right: -60px;
+  width: 300px;
+  height: 300px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  #auth { grid-template-columns: 1fr; }
+  .auth-left { display: none; }
+  .tree-layout { grid-template-columns: 1fr; }
+  .tree-panel-left, .tree-panel-right { display: none; }
+}
+
+/* animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fade-up 0.6s ease both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+  <div class="logo" onclick="showPage('home')">
+    <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" stroke="#0F1623" stroke-width="1.2"/>
+      <circle cx="16" cy="16" r="5" fill="#E05C1A"/>
+      <g stroke="#0F1623" stroke-width="1">
+        <line x1="16" y1="2" x2="16" y2="7"/>
+        <line x1="16" y1="25" x2="16" y2="30"/>
+        <line x1="2" y1="16" x2="7" y2="16"/>
+        <line x1="25" y1="16" x2="30" y2="16"/>
+        <line x1="5.5" y1="5.5" x2="9.2" y2="9.2"/>
+        <line x1="22.8" y1="22.8" x2="26.5" y2="26.5"/>
+        <line x1="26.5" y1="5.5" x2="22.8" y2="9.2"/>
+        <line x1="9.2" y1="22.8" x2="5.5" y2="26.5"/>
+      </g>
+    </svg>
+    <span class="logo-text">Nirn<span>ay</span></span>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="showPage('tree-page')">Decision Tree</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="window.location.href='login.html'">Log in</button>
+    <button class="btn btn-accent" onclick="window.location.href='signup.html'">Get Started</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════ -->
+<div id="home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- mandala bg -->
+    <svg class="mandala-hero" viewBox="0 0 340 340" fill="none">
+      <circle cx="170" cy="170" r="165" stroke="#0F1623" stroke-width="0.8"/>
+      <circle cx="170" cy="170" r="130" stroke="#0F1623" stroke-width="0.5"/>
+      <circle cx="170" cy="170" r="95" stroke="#0F1623" stroke-width="0.5"/>
+      <circle cx="170" cy="170" r="60" stroke="#0F1623" stroke-width="0.5"/>
+      <circle cx="170" cy="170" r="25" stroke="#0F1623" stroke-width="0.8"/>
+      <g stroke="#0F1623" stroke-width="0.5">
+        <line x1="170" y1="5" x2="170" y2="335"/>
+        <line x1="5" y1="170" x2="335" y2="170"/>
+        <line x1="53" y1="53" x2="287" y2="287"/>
+        <line x1="287" y1="53" x2="53" y2="287"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(22.5 170 170)"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(45 170 170)"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(67.5 170 170)"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(112.5 170 170)"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(135 170 170)"/>
+        <line x1="170" y1="5" x2="170" y2="335" transform="rotate(157.5 170 170)"/>
+      </g>
+      <g fill="#0F1623">
+        <circle cx="170" cy="5" r="2.5"/><circle cx="170" cy="335" r="2.5"/>
+        <circle cx="5" cy="170" r="2.5"/><circle cx="335" cy="170" r="2.5"/>
+        <circle cx="53" cy="53" r="2"/><circle cx="287" cy="287" r="2"/>
+        <circle cx="287" cy="53" r="2"/><circle cx="53" cy="287" r="2"/>
+        <circle cx="170" cy="40" r="2" transform="rotate(22.5 170 170)"/>
+        <circle cx="170" cy="40" r="2" transform="rotate(67.5 170 170)"/>
+        <circle cx="170" cy="40" r="2" transform="rotate(112.5 170 170)"/>
+        <circle cx="170" cy="40" r="2" transform="rotate(157.5 170 170)"/>
+      </g>
+    </svg>
+
+    <div class="hero-left fade-up">
+      <div class="hero-pill"><div class="pill-dot"></div>AI-Powered Feedback Intelligence</div>
+      <h1>Turn Customer Feedback into <em>Decisive Action</em></h1>
+      <p class="hero-sub">Nirnay unifies your feedback streams, surfaces hidden insights using AI, and guides your team through structured decisions — from data to action in minutes.</p>
+      <div class="hero-actions">
+        <button class="btn btn-accent btn-xl" onclick="showPage('auth'); switchTab('signup')">Upload Data →</button>
+        <button class="btn btn-ghost btn-xl" onclick="showPage('tree-page')">Try Decision Tree</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">3×</span><span class="stat-label">Faster decisions</span></div>
+        <div class="stat"><span class="stat-num">94%</span><span class="stat-label">Accuracy rate</span></div>
+        <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Teams using Nirnay</span></div>
+      </div>
+    </div>
+
+    <div class="hero-right fade-up delay-2">
+      <div style="position:relative;">
+        <div class="floating-tag tag-top-right">✦ 847 insights generated</div>
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="card-title-sm">Sentiment Analysis Report</span>
+            <span class="badge badge-green">Live</span>
+          </div>
+          <div style="font-size:12px;color:var(--slate);margin-bottom:12px;font-weight:300;">Q3 Customer Feedback · 1,240 responses</div>
+          <div class="insight-rows">
+            <div class="insight-row">
+              <span class="insight-label">Positive</span>
+              <div class="insight-bar-wrap"><div class="insight-bar bar-green" style="width:72%"></div></div>
+              <span class="insight-pct">72%</span>
+            </div>
+            <div class="insight-row">
+              <span class="insight-label">Neutral</span>
+              <div class="insight-bar-wrap"><div class="insight-bar bar-blue" style="width:18%"></div></div>
+              <span class="insight-pct">18%</span>
+            </div>
+            <div class="insight-row">
+              <span class="insight-label">Negative</span>
+              <div class="insight-bar-wrap"><div class="insight-bar bar-saffron" style="width:10%"></div></div>
+              <span class="insight-pct">10%</span>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--slate);margin-bottom:8px;">Top Themes</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span style="font-size:11px;background:var(--green-pale);color:var(--green);padding:3px 10px;border-radius:20px;font-weight:500;">Ease of Use ↑</span>
+              <span style="font-size:11px;background:#EEF3FF;color:#3A7BF7;padding:3px 10px;border-radius:20px;font-weight:500;">Support Quality</span>
+              <span style="font-size:11px;background:var(--saffron-pale);color:var(--saffron);padding:3px 10px;border-radius:20px;font-weight:500;">Pricing ↓</span>
+            </div>
+          </div>
+        </div>
+        <div class="floating-tag tag-bottom-left">🔀 Decision tree ready</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-inner">
+      <span class="marquee-item"><span class="marquee-dot"></span>AI Report Generation</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Sentiment Analysis</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Google Forms Integration</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Excel / CSV Upload</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Smart Decision Engine</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Root Cause Analysis</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>CRM Export Support</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Action Plans</span>
+      <!-- repeat for seamless loop -->
+      <span class="marquee-item"><span class="marquee-dot"></span>AI Report Generation</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Sentiment Analysis</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Google Forms Integration</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Excel / CSV Upload</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Smart Decision Engine</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Root Cause Analysis</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>CRM Export Support</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Action Plans</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features-section">
+    <div class="section-label">Core Capabilities</div>
+    <div class="section-title">Three tools. One seamless workflow.</div>
+    <div class="features-grid">
+      <div class="feat-card feat-card-1">
+        <div class="feat-num">01 — PROCESS</div>
+        <div class="feat-icon-wrap feat-icon-1">📄</div>
+        <h3>AI Report Generator</h3>
+        <p>Upload raw customer feedback and instantly receive structured insights, sentiment scores, and ranked recommendations — no manual effort required.</p>
+        <div class="feat-tags">
+          <span class="feat-tag">Sentiment Analysis</span>
+          <span class="feat-tag">Auto Summary</span>
+          <span class="feat-tag">PDF Export</span>
+        </div>
+      </div>
+      <div class="feat-card feat-card-2">
+        <div class="feat-num">02 — INTEGRATE</div>
+        <div class="feat-icon-wrap feat-icon-2">🔗</div>
+        <h3>Seamless Feedback Integration</h3>
+        <p>Collect and unify feedback from Google Forms, Excel uploads, and CRM exports into one intelligent platform. No silos, no switching tools.</p>
+        <div class="feat-tags">
+          <span class="feat-tag">Google Forms</span>
+          <span class="feat-tag">Excel / CSV</span>
+          <span class="feat-tag">CRM Export</span>
+        </div>
+      </div>
+      <div class="feat-card feat-card-3">
+        <div class="feat-num">03 — DECIDE</div>
+        <div class="feat-icon-wrap feat-icon-3">🌿</div>
+        <h3>Smart Decision Engine</h3>
+        <p>Go beyond insights. Our AI builds a structured decision tree to identify root causes, calculate expected values, and guide your next best action.</p>
+        <div class="feat-tags">
+          <span class="feat-tag">Decision Trees</span>
+          <span class="feat-tag">Root Cause AI</span>
+          <span class="feat-tag">Action Plans</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <div class="flow-section">
+    <!-- dome ornament -->
+    <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.04;width:320px;height:200px;pointer-events:none;" viewBox="0 0 320 200" fill="none">
+      <path d="M10 180 Q10 20 160 20 Q310 20 310 180" stroke="white" stroke-width="1.2" fill="none"/>
+      <path d="M40 180 Q40 50 160 50 Q280 50 280 180" stroke="white" stroke-width="0.8" fill="none"/>
+      <path d="M70 180 Q70 80 160 80 Q250 80 250 180" stroke="white" stroke-width="0.6" fill="none"/>
+      <line x1="160" y1="20" x2="160" y2="180" stroke="white" stroke-width="0.5"/>
+      <line x1="10" y1="180" x2="310" y2="180" stroke="white" stroke-width="0.5"/>
+    </svg>
+    <div class="flow-inner">
+      <div class="flow-item">
+        <div class="flow-step-num">STEP 01</div>
+        <h4>Integrate Data</h4>
+        <p>Connect Google Forms, upload Excel or CSV files, or pull from your CRM.</p>
+      </div>
+      <div class="flow-item">
+        <div class="flow-step-num">STEP 02</div>
+        <h4>AI Analysis</h4>
+        <p>Nirnay processes responses, detects sentiment, and surfaces key themes.</p>
+      </div>
+      <div class="flow-item">
+        <div class="flow-step-num">STEP 03</div>
+        <h4>Make Decisions</h4>
+        <p>Use the decision tree engine to navigate outcomes and act with confidence.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="section-label">Get Started Today</div>
+    <h2>Ready to make smarter decisions?</h2>
+    <p>Join teams using Nirnay to turn customer feedback into decisive action.</p>
+    <button class="btn btn-accent btn-xl" onclick="showPage('auth'); switchTab('signup')">Start Free → Upload Your Data</button>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-left">
+      <span class="logo-text" style="font-family:'Syne',sans-serif;font-size:16px;">Nirn<span style="color:var(--saffron)">ay</span></span>
+      <span class="footer-note">Decision Intelligence Platform</span>
+    </div>
+    <span class="footer-devanagari">निर्णय · Built for real business workflows · © 2025</span>
+  </footer>
+</div>
+
+
+
+<!-- ═══════════════════════════════════════
+     DECISION TREE PAGE
+════════════════════════════════════════ -->
+<div id="tree-page" class="page">
+
+  <div class="tree-header">
+    <div class="tree-title-area">
+      <span class="tree-title">Decision Tree — Product Launch Strategy</span>
+      <span class="tree-subtitle">Click a node to inspect · Drag to pan · Hover edges for probabilities</span>
+    </div>
+    <div class="tree-actions">
+      <span class="badge badge-orange" style="font-size:12px;padding:5px 12px;">Auto-calculated</span>
+      <button class="btn btn-ghost" style="font-size:13px;" onclick="resetTree()">↺ Reset</button>
+      <button class="btn btn-accent" style="font-size:13px;" onclick="showOptimal()">Show Optimal Path</button>
+    </div>
+  </div>
+
+  <div class="tree-layout">
+
+    <!-- Left Panel -->
+    <div class="tree-panel-left">
+      <div class="panel-section-title">Node Types</div>
+      <div class="node-palette">
+        <div class="palette-node"><div class="palette-dot dot-decision"></div> Decision Node — □</div>
+        <div class="palette-node"><div class="palette-dot dot-chance"></div> Chance Node — ○</div>
+        <div class="palette-node"><div class="palette-dot dot-outcome"></div> Outcome Node — △</div>
+      </div>
+
+      <div class="panel-section-title">Legend</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate);">
+          <svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="var(--saffron)" stroke-width="2.5"/></svg>
+          Optimal path
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate);">
+          <svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="rgba(15,22,35,0.18)" stroke-width="1.5"/></svg>
+          Branch path
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate);">
+          <svg width="12" height="12"><rect width="12" height="12" rx="2" fill="#EEF3FF" stroke="#3A7BF7" stroke-width="1.5"/></svg>
+          Decision (choose)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate);">
+          <svg width="12" height="12"><circle cx="6" cy="6" r="6" fill="var(--saffron-pale)" stroke="var(--saffron)" stroke-width="1.5"/></svg>
+          Chance (probability)
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate);">
+          <svg width="12" height="12"><polygon points="6,0 12,12 0,12" fill="var(--green-pale)" stroke="var(--green)" stroke-width="1.5"/></svg>
+          Outcome (payoff)
+        </div>
+      </div>
+
+      <div class="panel-section-title">Expected Values</div>
+      <div class="ev-display">
+        <div class="ev-row"><span class="ev-row-label">No Testing</span><span class="ev-row-val" id="ev-notesting">$28,500</span></div>
+        <div class="ev-row"><span class="ev-row-label">Market Test (+ve)</span><span class="ev-row-val" id="ev-positive">$71,950</span></div>
+        <div class="ev-row"><span class="ev-row-label">Market Test (−ve)</span><span class="ev-row-val" id="ev-negative">$31,000</span></div>
+        <div class="ev-row"><span class="ev-row-label">Optimal EV</span><span class="ev-row-val highlight" id="ev-optimal">$54,425</span></div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="tree-canvas-wrap">
+      <svg id="tree-canvas-svg" viewBox="0 0 760 580" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="rgba(15,22,35,0.22)"/>
+          </marker>
+          <marker id="arrowhead-opt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--saffron)"/>
+          </marker>
+        </defs>
+
+        <!-- ── EDGES ── -->
+        <!-- Root → No Testing -->
+        <path id="e-root-notesting" class="tree-edge" d="M120,290 C200,290 200,160 280,160" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="190" y="208">No testing</text>
+
+        <!-- Root → Market Testing -->
+        <path id="e-root-mkttest" class="tree-edge" d="M120,290 C200,290 200,420 280,420" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="178" y="378">Market test −$25k</text>
+
+        <!-- No Testing chance → outcomes -->
+        <path class="tree-edge" d="M340,160 C400,160 400,100 470,100" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="378" y="118">Successful 30%</text>
+        <path class="tree-edge" d="M340,160 C400,160 400,160 470,160" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="378" y="155">Modest 40%</text>
+        <path class="tree-edge" d="M340,160 C400,160 400,220 470,220" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="378" y="215">Poor 30%</text>
+
+        <!-- Market Test decision → Positive outcome chance -->
+        <path id="e-mkttest-pos" class="tree-edge" d="M340,420 C400,420 400,320 470,320" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="370" y="353">Positive 65%</text>
+
+        <!-- Market Test decision → Negative outcome chance -->
+        <path class="tree-edge" d="M340,420 C400,420 400,490 470,490" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="368" y="468">Negative 35%</text>
+
+        <!-- Positive chance → outcomes -->
+        <path class="tree-edge" d="M530,320 C590,320 590,270 620,270" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="283">60%</text>
+        <path class="tree-edge" d="M530,320 C590,320 590,320 620,320" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="315">30%</text>
+        <path class="tree-edge" d="M530,320 C590,320 590,370 620,370" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="370">10%</text>
+
+        <!-- Negative chance → outcomes -->
+        <path class="tree-edge" d="M530,490 C590,490 590,444 620,444" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="453">60%</text>
+        <path class="tree-edge" d="M530,490 C590,490 590,490 620,490" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="486">30%</text>
+        <path class="tree-edge" d="M530,490 C590,490 590,534 620,534" marker-end="url(#arrowhead)"/>
+        <text class="tree-edge-label" x="554" y="536">10%</text>
+
+        <!-- ── NODES ── -->
+        <!-- Root Decision square -->
+        <g id="node-root" onclick="selectNode('root')" transform="translate(60,262)">
+          <rect class="tree-node-decision" x="0" y="0" width="60" height="56" rx="8"/>
+          <text class="tree-node-label" x="30" y="24">Product</text>
+          <text class="tree-node-label" y="40" x="30">Launch</text>
+        </g>
+
+        <!-- No Testing chance circle -->
+        <g id="node-notesting" onclick="selectNode('notesting')" transform="translate(310,134)">
+          <circle class="tree-node-chance" cx="30" cy="28" r="28"/>
+          <text class="tree-node-label" x="30" y="22">No</text>
+          <text class="tree-node-label" x="30" y="36">Test</text>
+        </g>
+
+        <!-- Market Testing decision square -->
+        <g id="node-mkttest" onclick="selectNode('mkttest')" transform="translate(310,394)">
+          <rect class="tree-node-decision" x="0" y="0" width="60" height="52" rx="8"/>
+          <text class="tree-node-label" x="30" y="20">Market</text>
+          <text class="tree-node-label" x="30" y="36">Test</text>
+        </g>
+
+        <!-- Positive outcome chance circle -->
+        <g id="node-positive" onclick="selectNode('positive')" transform="translate(440,294)">
+          <circle class="tree-node-chance" cx="30" cy="28" r="28"/>
+          <text class="tree-node-label" x="30" y="22">+ve</text>
+          <text class="tree-node-label" x="30" y="36">65%</text>
+        </g>
+
+        <!-- Negative outcome chance circle -->
+        <g id="node-negative" onclick="selectNode('negative')" transform="translate(440,464)">
+          <circle class="tree-node-chance" cx="30" cy="28" r="28"/>
+          <text class="tree-node-label" x="30" y="22">−ve</text>
+          <text class="tree-node-label" x="30" y="36">35%</text>
+        </g>
+
+        <!-- Outcome triangles — No Testing branch -->
+        <g id="node-out1" onclick="selectNode('out1')">
+          <polygon class="tree-node-outcome" points="470,80 500,114 440,114"/>
+          <text class="tree-payoff-label" x="508" y="101">$100k</text>
+          <text class="tree-node-sublabel" x="470" y="107">Success</text>
+        </g>
+        <g id="node-out2" onclick="selectNode('out2')">
+          <polygon class="tree-node-outcome" points="470,140 500,174 440,174"/>
+          <text class="tree-payoff-label" x="508" y="162">$60k</text>
+          <text class="tree-node-sublabel" x="470" y="163">Modest</text>
+        </g>
+        <g id="node-out3" onclick="selectNode('out3')">
+          <polygon class="tree-node-outcome" points="470,200 500,234 440,234"/>
+          <text class="tree-payoff-label" x="508" y="222">$5k</text>
+          <text class="tree-node-sublabel" x="470" y="222">Poor</text>
+        </g>
+
+        <!-- Outcome triangles — Positive branch -->
+        <g id="node-out4" onclick="selectNode('out4')">
+          <polygon class="tree-node-outcome" points="620,250 650,284 590,284"/>
+          <text class="tree-payoff-label" x="658" y="272">$130k</text>
+          <text class="tree-node-sublabel" x="621" y="274">Success</text>
+        </g>
+        <g id="node-out5" onclick="selectNode('out5')">
+          <polygon class="tree-node-outcome" points="620,300 650,334 590,334"/>
+          <text class="tree-payoff-label" x="658" y="322">$80k</text>
+          <text class="tree-node-sublabel" x="621" y="324">Modest</text>
+        </g>
+        <g id="node-out6" onclick="selectNode('out6')">
+          <polygon class="tree-node-outcome" points="620,350 650,384 590,384"/>
+          <text class="tree-payoff-label" x="658" y="372">$5k</text>
+          <text class="tree-node-sublabel" x="621" y="374">Poor</text>
+        </g>
+
+        <!-- Outcome triangles — Negative branch -->
+        <g id="node-out7" onclick="selectNode('out7')">
+          <polygon class="tree-node-outcome" points="620,424 650,458 590,458"/>
+          <text class="tree-payoff-label" x="658" y="446">$139k</text>
+          <text class="tree-node-sublabel" x="621" y="447">Success</text>
+        </g>
+        <g id="node-out8" onclick="selectNode('out8')">
+          <polygon class="tree-node-outcome" points="620,470 650,504 590,504"/>
+          <text class="tree-payoff-label" x="658" y="492">$60k</text>
+          <text class="tree-node-sublabel" x="621" y="492">Modest</text>
+        </g>
+        <g id="node-out9" onclick="selectNode('out9')">
+          <polygon class="tree-node-outcome" points="620,514 650,548 590,548"/>
+          <text class="tree-payoff-label" x="658" y="536">$5k</text>
+          <text class="tree-node-sublabel" x="621" y="536">Poor</text>
+        </g>
+
+        <!-- EV labels inside chance nodes (dynamic) -->
+        <text id="ev-label-notesting" class="tree-node-sublabel" x="340" y="175" style="fill:var(--slate);font-size:10px;text-anchor:middle;">EV: $28.5k</text>
+        <text id="ev-label-positive" class="tree-node-sublabel" x="470" y="338" style="fill:var(--slate);font-size:10px;text-anchor:middle;">EV: $72k</text>
+        <text id="ev-label-negative" class="tree-node-sublabel" x="470" y="508" style="fill:var(--slate);font-size:10px;text-anchor:middle;">EV: $31k</text>
+      </svg>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="tree-panel-right">
+      <div class="panel-section-title">Node Details</div>
+
+      <div id="node-empty" class="node-detail-empty">
+        <div class="node-detail-icon">🖱</div>
+        Click any node to inspect details, probabilities, and payoffs
+      </div>
+
+      <div id="node-detail" class="node-detail-panel">
+        <div class="detail-label">Node Name</div>
+        <div class="detail-value" id="detail-name">—</div>
+
+        <div class="detail-label">Type</div>
+        <div id="detail-type-badge" style="margin-top:4px;"></div>
+
+        <div class="detail-label">Description</div>
+        <div class="detail-value" id="detail-desc" style="font-weight:300;font-size:13px;line-height:1.6;">—</div>
+
+        <div id="detail-prob-wrap" style="display:none;">
+          <div class="detail-label">Probability</div>
+          <input class="detail-input" id="detail-prob" type="number" min="0" max="100" placeholder="e.g. 65">
+        </div>
+
+        <div id="detail-payoff-wrap" style="display:none;">
+          <div class="detail-label">Payoff ($)</div>
+          <input class="detail-input" id="detail-payoff" type="number" placeholder="e.g. 100000">
+        </div>
+
+        <div class="detail-label" style="margin-top:16px;">Expected Value Summary</div>
+        <div class="ev-display">
+          <div class="ev-row"><span class="ev-row-label">No Testing EV</span><span class="ev-row-val">$28,500</span></div>
+          <div class="ev-row"><span class="ev-row-label">Market Test EV</span><span class="ev-row-val">$54,425</span></div>
+          <div class="ev-row"><span class="ev-row-label">Best Choice</span><span class="ev-row-val highlight">Market Test ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tree-status">
+    <div class="status-item"><div class="status-dot"></div> 9 nodes · 11 edges</div>
+    <div class="status-item">Optimal path: Market Test → Positive Outcome → Successful Launch</div>
+    <div class="status-item" style="margin-left:auto;">
+      <button class="btn btn-ghost" style="font-size:12px;padding:4px 12px;" onclick="showPage('home')">← Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PAGE ROUTER ───
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── AUTH TABS ───
+function switchTab(tab) {
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+  const tabLogin = document.getElementById('tab-login');
+  const tabSignup = document.getElementById('tab-signup');
+
+  if (tab === 'login') {
+    loginForm.style.display = 'block';
+    signupForm.style.display = 'none';
+    tabLogin.classList.add('active');
+    tabSignup.classList.remove('active');
+  } else {
+    loginForm.style.display = 'none';
+    signupForm.style.display = 'block';
+    tabLogin.classList.remove('active');
+    tabSignup.classList.add('active');
+  }
+}
+
+// ─── DECISION TREE ───
+const nodeData = {
+  root: {
+    name: 'Product Launch',
+    type: 'decision',
+    desc: 'Initial strategic decision: proceed without market testing or invest in a market test first before launching.',
+    showProb: false, showPayoff: false
+  },
+  notesting: {
+    name: 'No Testing Branch',
+    type: 'chance',
+    desc: 'Launch without market testing. Expected value = 30%×$100k + 40%×$60k + 30%×$5k = $28,500.',
+    showProb: false, showPayoff: false
+  },
+  mkttest: {
+    name: 'Market Testing',
+    type: 'decision',
+    desc: 'Invest $25,000 in market testing. Results in 65% chance of positive outcome and 35% chance of negative.',
+    showProb: false, showPayoff: false
+  },
+  positive: {
+    name: 'Positive Test Outcome',
+    type: 'chance',
+    desc: '65% probability. Launch after positive signal. EV = 60%×$130k + 30%×$80k + 10%×$5k = $102,500 (net: $77,500 after test cost).',
+    showProb: true, showPayoff: false
+  },
+  negative: {
+    name: 'Negative Test Outcome',
+    type: 'chance',
+    desc: '35% probability. Launch after negative signal. EV = 60%×$139k + 30%×$60k + 10%×$5k = $101,900 (net: $76,900 after test cost).',
+    showProb: true, showPayoff: false
+  },
+  out1: { name: 'Successful Launch (No Test)', type: 'outcome', desc: 'Successful market launch without testing. 30% probability.', showProb: true, showPayoff: true },
+  out2: { name: 'Modest Launch (No Test)', type: 'outcome', desc: 'Modest performance without testing. 40% probability.', showProb: true, showPayoff: true },
+  out3: { name: 'Poor Launch (No Test)', type: 'outcome', desc: 'Poor performance without testing. 30% probability.', showProb: true, showPayoff: true },
+  out4: { name: 'Successful (+ve Test)', type: 'outcome', desc: 'Successful launch after positive test. 60% probability.', showProb: true, showPayoff: true },
+  out5: { name: 'Modest (+ve Test)', type: 'outcome', desc: 'Modest launch after positive test. 30% probability.', showProb: true, showPayoff: true },
+  out6: { name: 'Poor (+ve Test)', type: 'outcome', desc: 'Poor launch after positive test. 10% probability.', showProb: true, showPayoff: true },
+  out7: { name: 'Successful (−ve Test)', type: 'outcome', desc: 'Successful launch despite negative test. 60% probability.', showProb: true, showPayoff: true },
+  out8: { name: 'Modest (−ve Test)', type: 'outcome', desc: 'Modest launch after negative test. 30% probability.', showProb: true, showPayoff: true },
+  out9: { name: 'Poor (−ve Test)', type: 'outcome', desc: 'Poor launch after negative test. 10% probability.', showProb: true, showPayoff: true },
+};
+
+const nodePayoffs = { out1:100000, out2:60000, out3:5000, out4:130000, out5:80000, out6:5000, out7:139000, out8:60000, out9:5000 };
+const nodeProbs = { positive:65, negative:35, out1:30, out2:40, out3:30, out4:60, out5:30, out6:10, out7:60, out8:30, out9:10 };
+
+let selectedNode = null;
+
+function selectNode(id) {
+  // deselect all
+  document.querySelectorAll('[id^="node-"]').forEach(el => {
+    el.querySelectorAll('rect,circle,polygon').forEach(s => s.classList.remove('tree-node-selected'));
+  });
+
+  const el = document.getElementById('node-' + id);
+  if (el) el.querySelectorAll('rect,circle,polygon').forEach(s => s.classList.add('tree-node-selected'));
+
+  selectedNode = id;
+  const d = nodeData[id];
+  if (!d) return;
+
+  document.getElementById('node-empty').style.display = 'none';
+  const panel = document.getElementById('node-detail');
+  panel.classList.add('show');
+
+  document.getElementById('detail-name').textContent = d.name;
+  document.getElementById('detail-desc').textContent = d.desc;
+
+  const typeColors = { decision:'#EEF3FF', chance:'var(--saffron-pale)', outcome:'var(--green-pale)' };
+  const typeText = { decision:'Decision Node', chance:'Chance Node', outcome:'Outcome Node' };
+  const typeFg = { decision:'#3A7BF7', chance:'var(--saffron)', outcome:'var(--green)' };
+  document.getElementById('detail-type-badge').innerHTML =
+    `<span style="font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;background:${typeColors[d.type]};color:${typeFg[d.type]}">${typeText[d.type]}</span>`;
+
+  const probWrap = document.getElementById('detail-prob-wrap');
+  const payoffWrap = document.getElementById('detail-payoff-wrap');
+
+  probWrap.style.display = d.showProb ? 'block' : 'none';
+  payoffWrap.style.display = d.showPayoff ? 'block' : 'none';
+
+  if (d.showProb && nodeProbs[id]) document.getElementById('detail-prob').value = nodeProbs[id];
+  if (d.showPayoff && nodePayoffs[id]) document.getElementById('detail-payoff').value = nodePayoffs[id];
+}
+
+let optimalShown = false;
+function showOptimal() {
+  optimalShown = !optimalShown;
+  const eRoot = document.getElementById('e-root-mkttest');
+  const ePos = document.getElementById('e-root-notesting');
+  const eMktPos = document.getElementById('e-mkttest-pos');
+
+  if (optimalShown) {
+    eRoot.classList.add('tree-optimal-edge');
+    eRoot.setAttribute('marker-end', 'url(#arrowhead-opt)');
+    eMktPos.classList.add('tree-optimal-edge');
+    eMktPos.setAttribute('marker-end', 'url(#arrowhead-opt)');
+    document.querySelector('.tree-actions .btn-accent').textContent = 'Hide Optimal Path';
+  } else {
+    eRoot.classList.remove('tree-optimal-edge');
+    eRoot.setAttribute('marker-end', 'url(#arrowhead)');
+    eMktPos.classList.remove('tree-optimal-edge');
+    eMktPos.setAttribute('marker-end', 'url(#arrowhead)');
+    document.querySelector('.tree-actions .btn-accent').textContent = 'Show Optimal Path';
+  }
+}
+
+function resetTree() {
+  optimalShown = false;
+  document.querySelectorAll('.tree-edge').forEach(e => {
+    e.classList.remove('tree-optimal-edge');
+    e.setAttribute('marker-end', 'url(#arrowhead)');
+  });
+  document.querySelectorAll('[id^="node-"]').forEach(el => {
+    el.querySelectorAll('rect,circle,polygon').forEach(s => s.classList.remove('tree-node-selected'));
+  });
+  document.getElementById('node-empty').style.display = 'flex';
+  document.getElementById('node-detail').classList.remove('show');
+  document.querySelector('.tree-actions .btn-accent').textContent = 'Show Optimal Path';
+}
+</script>
+<script type="module" src="../assets/js/script.js"></script>
+</body>
+</html>

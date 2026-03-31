@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Decision Tree – Nirnay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:          #0D1520;
+      --ink-2:        #1A2740;
+      --ink-3:        #2C3E5A;
+      --saffron:      #E05C1A;
+      --saffron-2:    #F2834A;
+      --saffron-pale: #FDF0E8;
+      --amber:        #D4880E;
+      --amber-pale:   #FDF6E3;
+      --red:          #C0392B;
+      --red-pale:     #FDECEB;
+      --green:        #0D7A4E;
+      --green-pale:   #E3F5EE;
+      --blue:         #2563EB;
+      --blue-pale:    #EEF3FF;
+      --slate:        #6B7A99;
+      --slate-2:      #9AA5BE;
+      --mist:         #F5F6FA;
+      --mist-2:       #ECEEF5;
+      --mist-3:       #E4EAF6;
+      --white:        #FFFFFF;
+      --border:       rgba(13,21,32,0.07);
+      --border-2:     rgba(13,21,32,0.13);
+      --sidebar-w:    220px;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--mist);
+      color: var(--ink);
+      display: flex;
+    }
+
+    /* ── SIDEBAR (same as dashboard) ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--ink);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100vh;
+      position: fixed;
+      left: 0; top: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='120' cy='120' r='115' stroke='white' stroke-width='0.6' fill='none'/%3E%3Ccircle cx='120' cy='120' r='85' stroke='white' stroke-width='0.4' fill='none'/%3E%3Ccircle cx='120' cy='120' r='55' stroke='white' stroke-width='0.4' fill='none'/%3E%3Ccircle cx='120' cy='120' r='25' stroke='white' stroke-width='0.5' fill='none'/%3E%3Cg stroke='white' stroke-width='0.4'%3E%3Cline x1='120' y1='5' x2='120' y2='235'/%3E%3Cline x1='5' y1='120' x2='235' y2='120'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(45 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(22.5 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(67.5 120 120)'/%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .sidebar-logo {
+      padding: 1.25rem 1.25rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: white; }
+    .logo-text span { color: var(--saffron-2); }
+
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
+      padding: 0.75rem 1.25rem 0.4rem;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.6rem 1.25rem; margin: 1px 0.5rem;
+      border-radius: 8px; font-size: 13.5px; font-weight: 400;
+      color: rgba(255,255,255,0.5); cursor: pointer;
+      transition: all 0.16s; text-decoration: none; position: relative;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active {
+      background: rgba(224,92,26,0.18); color: white; font-weight: 500;
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 3px; background: var(--saffron-2); border-radius: 0 3px 3px 0;
+    }
+    .nav-icon { font-size: 15px; width: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto; font-size: 10px; font-weight: 600;
+      background: var(--red); color: white;
+      padding: 2px 7px; border-radius: 20px;
+    }
+    .nav-badge-amber { background: var(--amber); }
+
+    .sidebar-bottom {
+      margin-top: auto; border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 1rem 1.25rem;
+    }
+    .user-card { display: flex; align-items: center; gap: 10px; }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), var(--amber));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+      color: white; flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 500; color: white; }
+    .user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: white; border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50; flex-shrink: 0;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--slate);
+    }
+    .breadcrumb-sep { color: var(--mist-2); }
+    .breadcrumb-current { font-weight: 500; color: var(--ink); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .zoom-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 246, 250, 0.95);
+      border: 1px solid var(--border-2);
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .zoom-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border-2);
+      background: #fff;
+      color: var(--ink-2);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .zoom-btn:hover { background: var(--mist); }
+    .zoom-value {
+      min-width: 52px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-3);
+    }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer;
+      transition: all 0.16s; border: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost { background: var(--mist); color: var(--ink-2); border: 1px solid var(--border-2); }
+    .btn-ghost:hover { background: var(--mist-2); }
+    .btn-primary { background: var(--ink); color: white; }
+    .btn-primary:hover { background: var(--ink-2); transform: translateY(-1px); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1; height: 100vh;
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+
+    /* scrollbar */
+    .main::-webkit-scrollbar { width: 5px; }
+    .main::-webkit-scrollbar-track { background: transparent; }
+    .main::-webkit-scrollbar-thumb { background: var(--mist-2); border-radius: 10px; }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 1.75rem 2rem 3rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      flex: 1;
+    }
+
+    /* ── HEADER STRIP ── */
+    .header-strip {
+      padding:20px 32px 0;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .page-title { font-size:22px; font-weight:700; letter-spacing:-.3px; }
+    .page-sub   { font-size:13px; color:var(--slate); margin-top:2px; }
+
+    .pills { display:flex; gap:8px; flex-wrap:wrap; }
+    .pill {
+      display:flex; align-items:center; gap:6px;
+      background:#fff; border:1px solid var(--border);
+      border-radius:99px; padding:5px 14px;
+      font-size:12.5px; font-weight:600; color:var(--text);
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .pill-dot { width:8px; height:8px; border-radius:50%; }
+    .pill-dot.orange { background:var(--saffron); }
+    .pill-dot.blue   { background:var(--blue); }
+    .pill-dot.green  { background:var(--green); }
+
+    /* sub-info row */
+    .meta-row { padding:8px 32px 14px; font-size:12px; color:var(--faint); }
+
+    /* ── CANVAS AREA ── */
+    .canvas-wrap {
+      flex:1;
+      overflow:auto;
+      position:relative;
+      border: 1px solid rgba(112,130,168,0.28);
+      border-radius: 20px;
+      box-shadow:
+        0 16px 36px rgba(28,42,68,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.92);
+      background:
+        radial-gradient(ellipse at 10% 0%, rgba(37,99,235,.12) 0%, rgba(37,99,235,0) 45%),
+        radial-gradient(ellipse at 88% 100%, rgba(224,92,26,.11) 0%, rgba(224,92,26,0) 42%),
+        linear-gradient(160deg, rgba(255,255,255,.74) 0%, rgba(246,249,255,.84) 48%, rgba(255,252,246,.82) 100%);
+      backdrop-filter: blur(5px);
+    }
+
+    .canvas-wrap::before {
+      content:'';
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius: 20px;
+      background-image:
+        linear-gradient(to bottom, rgba(255,255,255,0.58), rgba(255,255,255,0) 26%),
+        repeating-linear-gradient(135deg, rgba(182,196,224,.24) 0px, rgba(182,196,224,.24) 1px, transparent 1px, transparent 62px);
+    }
+
+    .canvas-wrap::after {
+      content:'';
+      position:absolute;
+      width: 340px;
+      height: 340px;
+      right: -90px;
+      top: -120px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(240,146,62,0.18) 0%, rgba(240,146,62,0) 70%);
+      filter: blur(8px);
+    }
+
+    #canvas {
+      position:absolute;
+      top: 0;
+      left: 0;
+      min-height: 720px;
+      padding: 16px 8px 24px;
+      transform-origin: top left;
+    }
+
+    #canvas-sizer {
+      position: relative;
+      min-width: 100%;
+      min-height: 100%;
+    }
+
+    /* SVG connector layer */
+    #svg-layer {
+      position:absolute; top:0; left:0; pointer-events:none;
+    }
+
+    #svg-layer path {
+      filter: drop-shadow(0 1px 2px rgba(30,41,59,0.16));
+      stroke-opacity: 0.92;
+    }
+
+    /* ── NODES ── */
+
+    /* Root – rounded rectangle, dark */
+    .node-root {
+      position:absolute;
+      background: linear-gradient(150deg, #17243a 0%, #0d1520 46%, #22324f 100%);
+      color:#fff;
+      border:2.5px solid rgba(242,131,74,0.88);
+      border-radius:18px;
+      padding:16px 28px;
+      text-align:center;
+      box-shadow: 0 14px 36px rgba(9,16,29,.38), inset 0 1px 0 rgba(255,255,255,0.15);
+      cursor:default;
+      animation:popIn .48s ease both;
+      min-width:200px;
+      transition: transform .24s ease, box-shadow .24s ease;
+    }
+    .node-root:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 44px rgba(9,16,29,.46), inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+    .node-root .n-label { font-size:9px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:var(--saffron); margin-bottom:6px; }
+    .node-root .n-text  { font-size:14px; font-weight:700; line-height:1.35; }
+
+    /* Condition – circle */
+    .node-cond {
+      position:absolute;
+      background: radial-gradient(circle at 30% 24%, #ffffff 0%, #f2f7ff 58%, #dbeafe 100%);
+      border:2.5px solid #8eb6ff;
+      border-radius:50%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center;
+      box-shadow:0 10px 20px rgba(59,110,245,.20), inset 0 1px 0 rgba(255,255,255,0.9);
+      cursor:default;
+      transition:transform .2s, box-shadow .2s;
+      animation:popIn .48s ease both;
+    }
+    .node-cond:hover { transform:scale(1.07); box-shadow:0 16px 30px rgba(59,110,245,.30); }
+    .node-cond .n-label { font-size:8.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+    .node-cond .n-text  { font-size:11px; font-weight:600; color:#1e40af; line-height:1.3; padding:0 8px; }
+
+    /* Action – rounded rectangle, orange */
+    .node-action {
+      position:absolute;
+      background: linear-gradient(165deg, #fff8e8 0%, #ffefcd 48%, #ffe4bf 100%);
+      border:2px solid #f4b173;
+      border-radius:14px;
+      padding:12px 16px;
+      text-align:center;
+      box-shadow:0 8px 20px rgba(232,121,41,.18), inset 0 1px 0 rgba(255,255,255,0.85);
+      cursor:default;
+      transition:transform .2s, box-shadow .2s;
+      animation:popIn .48s ease both;
+      min-width:130px;
+    }
+    .node-action:hover { transform:translateY(-5px); box-shadow:0 14px 30px rgba(232,121,41,.26); }
+    .node-action .n-label { font-size:8.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#ea580c; margin-bottom:5px; }
+    .node-action .n-text  { font-size:11px; font-weight:600; color:#c2410c; line-height:1.3; }
+
+    /* Circle Node – sub-factor */
+    .circle-node {
+      position:absolute;
+      background: radial-gradient(circle at 28% 22%, #ffffff 0%, #fff7e9 58%, #ffe8be 100%);
+      border:2.5px solid #df9f39;
+      border-radius:50%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center;
+      box-shadow:0 10px 22px rgba(217,119,6,.18), inset 0 1px 0 rgba(255,255,255,0.85);
+      cursor:default;
+      transition:transform .2s, box-shadow .2s;
+      animation:popIn .48s ease both;
+    }
+    .circle-node:hover { transform:scale(1.07); box-shadow:0 14px 30px rgba(217,119,6,.26); }
+    .circle-node .n-text  { font-size:10px; font-weight:600; color:#92400e; line-height:1.3; padding:0 6px; }
+
+    /* Diamond Node – final action */
+    .diamond-node {
+      position:absolute;
+      background: linear-gradient(150deg, #e8fff0 0%, #d4fadd 55%, #c6f3d0 100%);
+      border:2px solid #77dfa0;
+      width:80px; height:80px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      box-shadow:0 10px 20px rgba(34,197,94,.18), inset 0 1px 0 rgba(255,255,255,0.85);
+      cursor:default;
+      transition:transform .2s, box-shadow .2s;
+      animation:popIn .48s ease both;
+      transform: rotate(45deg);
+    }
+    .diamond-node:hover { transform: rotate(45deg) translateY(-4px); box-shadow:0 16px 28px rgba(34,197,94,.24); }
+    .diamond-node .n-text  { font-size:9px; font-weight:600; color:#15803d; line-height:1.2; transform: rotate(-45deg); }
+
+    @keyframes popIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+
+    @media (max-width: 900px) {
+      .content { padding: 1rem 1rem 2rem; }
+      .header-strip { padding: 14px 14px 0; }
+      .meta-row { padding: 8px 14px 12px; }
+      .canvas-wrap { border-radius: 14px; }
+      .canvas-wrap::before { border-radius: 14px; }
+    }
+
+    /* ── LOADING / ERROR ── */
+    .center-msg {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      height:100%; gap:14px; text-align:center; padding:40px;
+    }
+    .spinner { width:38px; height:38px; border:3px solid var(--border); border-top-color:var(--saffron); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .msg-title { font-size:17px; font-weight:700; }
+    .msg-sub   { font-size:13px; color:var(--slate); max-width:340px; line-height:1.5; }
+    
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      display:none; flex-direction:column; align-items:center; justify-content:center;
+      height:100%; gap:12px; text-align:center; padding:40px;
+    }
+    #empty-state.show { display:flex; }
+    #empty-state .empty-icon { font-size:48px; opacity:0.5; }
+    #empty-state .empty-text { font-size:16px; font-weight:500; color:var(--slate); max-width:340px; line-height:1.6; }
+  </style>
+</head>
+<body>
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+      <circle cx="16" cy="16" r="5" fill="#E05C1A"/>
+      <g stroke="rgba(255,255,255,0.4)" stroke-width="1">
+        <line x1="16" y1="2" x2="16" y2="7"/><line x1="16" y1="25" x2="16" y2="30"/>
+        <line x1="2" y1="16" x2="7" y2="16"/><line x1="25" y1="16" x2="30" y2="16"/>
+      </g>
+    </svg>
+    <span class="logo-text">Nirn<span>ay</span></span>
+  </div>
+
+  <div class="sidebar-section-label">Overview</div>
+  <a class="nav-item" href="dashboard.html">
+    <span class="nav-icon">⬛</span> Dashboard
+  </a>
+
+  <div class="sidebar-section-label">Feedback</div>
+  <a class="nav-item" href="nirnay-upload.html">
+    <span class="nav-icon">📤</span> Upload Data
+  </a>
+
+  <div class="sidebar-section-label">Decisions</div>
+  <a class="nav-item active" href="decisiontree.html">
+    <span class="nav-icon">🌿</span> Decision Trees
+  </a>
+
+  <div class="sidebar-section-label">Workspace</div>
+  <a class="nav-item" href="team.html">
+    <span class="nav-icon">👥</span> Team
+  </a>
+
+
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      <span>Nirnay</span>
+      <span class="breadcrumb-sep">›</span>
+      <span>Decisions</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Decision Trees</span>
+    </div>
+    <div class="topbar-right">
+      <div class="zoom-controls" aria-label="Zoom controls">
+        <button class="zoom-btn" onclick="zoomOut()" title="Zoom out" aria-label="Zoom out">-</button>
+        <span class="zoom-value" id="zoom-value">100%</span>
+        <button class="zoom-btn" onclick="zoomIn()" title="Zoom in" aria-label="Zoom in">+</button>
+        <button class="zoom-btn" onclick="resetZoom()" title="Reset zoom" aria-label="Reset zoom">1:1</button>
+      </div>
+      <button class="btn btn-ghost" onclick="loadTree()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+      <button class="btn btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="btn btn-primary">Analyze All Data ›</button>
+    </div>
+  </header>
+  <div class="content">
+    <div class="header-strip">
+    <div>
+      <div class="page-title">Decision Tree Analysis</div>
+      <div class="page-sub">AI-driven insights based on customer feedback</div>
+    </div>
+    <div class="pills">
+      <div class="pill"><div class="pill-dot orange"></div> <span id="root-count">3</span> Root Problems</div>
+      <div class="pill"><div class="pill-dot blue"></div>   <span id="cond-count">7</span> Conditions</div>
+      <div class="pill"><div class="pill-dot green"></div>  <span id="act-count">8</span> Actions</div>
+    </div>
+  </div>
+  <div class="meta-row" id="meta-row">Feedback · 3 root problems · 18 nodes</div>
+
+  <div class="canvas-wrap" id="canvas-wrap">
+    <div id="canvas-sizer">
+      <div id="canvas">
+        <svg id="svg-layer"></svg>
+      </div>
+    </div>
+    <div class="center-msg" id="loading-msg">
+      <div class="spinner"></div>
+      <div class="msg-title">Building Decision Tree…</div>
+      <div class="msg-sub">Fetching AI-powered insights from your feedback data</div>
+    </div>
+    <div id="empty-state">
+      <div class="empty-icon">📤</div>
+      <div class="empty-text">Generate your decision tree</div>
+    </div>
+  </div>
+  </div>
+
+<script>
+/* ════════════════════════════════════
+   NO MOCK DATA - ALL DATA IS REAL
+════════════════════════════════════ */
+
+/* ════════════════════════════════════
+   LAYOUT CONFIG
+════════════════════════════════════ */
+const ROOT_W   = 210, ROOT_H  = 72;
+const SUB_R    = 50;           // sub-factor circle radius
+const COND_R   = 60;           // circle radius
+const ACT_W    = 148, ACT_H   = 66;
+const DIAMOND_W = 80, DIAMOND_H = 80;
+const PAD_X    = 60;           // horizontal gap between roots
+const COL_PAD  = 48;           // horizontal gap between condition columns
+const ROOT_Y   = 50;
+const SUB_Y    = ROOT_Y + ROOT_H + 80;
+const COND_Y   = SUB_Y + SUB_R * 2 + 80;
+const ACT_Y    = COND_Y + COND_R * 2 + 110;
+const DIAMOND_Y = ACT_Y + ACT_H + 80;
+const DELAY_STEP = 0.07;
+
+// Use same-origin API when served over HTTP(S), else fallback to local backend.
+const API_BASE = "https://nirnay-backend.onrender.com";
+
+const MIN_ZOOM = 0.6;
+const MAX_ZOOM = 2.0;
+const ZOOM_STEP = 0.1;
+let zoomLevel = 1;
+let baseCanvasW = 1200;
+let baseCanvasH = 760;
+
+function updateZoomLabel() {
+  const label = document.getElementById('zoom-value');
+  if (label) label.textContent = `${Math.round(zoomLevel * 100)}%`;
+}
+
+function applyZoom() {
+  const canvas = document.getElementById('canvas');
+  const sizer = document.getElementById('canvas-sizer');
+  if (!canvas || !sizer) return;
+
+  const scaledW = Math.max(380, Math.round(baseCanvasW * zoomLevel));
+  const scaledH = Math.max(520, Math.round(baseCanvasH * zoomLevel));
+  sizer.style.width = `${scaledW}px`;
+  sizer.style.height = `${scaledH}px`;
+
+  if ('zoom' in canvas.style) {
+    canvas.style.zoom = zoomLevel;
+    canvas.style.transform = '';
+  } else {
+    canvas.style.zoom = '';
+    canvas.style.transform = `scale(${zoomLevel})`;
+  }
+
+  updateZoomLabel();
+}
+
+function zoomIn() {
+  zoomLevel = Math.min(MAX_ZOOM, Math.round((zoomLevel + ZOOM_STEP) * 100) / 100);
+  applyZoom();
+}
+
+function zoomOut() {
+  zoomLevel = Math.max(MIN_ZOOM, Math.round((zoomLevel - ZOOM_STEP) * 100) / 100);
+  applyZoom();
+}
+
+function resetZoom() {
+  zoomLevel = 1;
+  applyZoom();
+}
+
+/* ════════════════════════════════════
+   BRANCH COLOURS
+════════════════════════════════════ */
+const BRANCH_COLORS = ['#f59e0b','#3b6ef5','#a78bfa','#f43f5e','#06b6d4','#10b981','#f97316'];
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+function renderTree(data) {
+  document.getElementById('loading-msg').style.display = 'none';
+
+  const canvas    = document.getElementById('canvas');
+  const svgLayer  = document.getElementById('svg-layer');
+  canvas.innerHTML = '';
+  canvas.appendChild(svgLayer);
+  svgLayer.innerHTML = '';
+
+  /* ── Count totals for pills ── */
+  let totalCond = 0, totalAct = 0, totalSub = 0, totalFinal = 0;
+  data.roots.forEach(r => {
+    totalSub += r.subFactors.length;
+    r.branches.forEach(b => {
+      totalCond++;
+      totalAct += b.actions.length;
+      b.actions.forEach(a => totalFinal += a.finalActions.length);
+    });
+  });
+  document.getElementById('root-count').textContent = data.roots.length;
+  document.getElementById('cond-count').textContent = totalCond;
+  document.getElementById('act-count').textContent  = totalAct;
+  document.getElementById('meta-row').textContent   =
+    `Feedback · ${data.roots.length} root problems · ${data.roots.length + totalSub + totalCond + totalAct + totalFinal} nodes`;
+
+  /* ── Pre-compute widths for each root column ── */
+  const rootLayouts = data.roots.map(root => {
+    // width of this root = sum of (max action-group widths per branch) + gaps
+    const branchWidths = root.branches.map(b => Math.max(b.actions.length * (ACT_W + 20) - 20, ACT_W));
+    const totalW = branchWidths.reduce((s,w) => s + w, 0) + (root.branches.length - 1) * COL_PAD;
+    return { root, branchWidths, totalW };
+  });
+
+  /* ── Position root columns ── */
+  let cursorX = PAD_X;
+  const rootXCenters = rootLayouts.map(({ totalW }) => {
+    const cx = cursorX + totalW / 2;
+    cursorX += totalW + PAD_X * 2;
+    return cx;
+  });
+  const totalCanvasW = cursorX;
+  const totalCanvasH = DIAMOND_Y + DIAMOND_H + 80;
+  baseCanvasW = totalCanvasW;
+  baseCanvasH = totalCanvasH;
+
+  canvas.style.width  = totalCanvasW + 'px';
+  canvas.style.height = totalCanvasH + 'px';
+  svgLayer.setAttribute('width',  totalCanvasW);
+  svgLayer.setAttribute('height', totalCanvasH);
+  svgLayer.setAttribute('viewBox',`0 0 ${totalCanvasW} ${totalCanvasH}`);
+  applyZoom();
+
+  let animDelay = 0;
+
+  rootLayouts.forEach(({ root, branchWidths }, ri) => {
+    const rootCX = rootXCenters[ri];
+    const rootX  = rootCX - ROOT_W / 2;
+
+    /* ROOT NODE */
+    placeNode(canvas, 'node-root', rootX, ROOT_Y, ROOT_W, ROOT_H,
+      `<div class="n-label">⚠ Root Problem</div><div class="n-text">${esc(root.problem)}</div>`,
+      animDelay);
+    animDelay += DELAY_STEP;
+
+    /* SUB-FACTORS */
+    const subSpacing = 20;
+    const subGroupW = 3 * (SUB_R * 2) + 2 * subSpacing;
+    let subCursor = rootCX - subGroupW / 2;
+    root.subFactors.forEach((sub, si) => {
+      const subCX = subCursor + SUB_R;
+      const subCY = SUB_Y + SUB_R;
+
+      /* CURVED LINE: root bottom → sub top */
+      drawCurve(svgLayer,
+        rootCX, ROOT_Y + ROOT_H,
+        subCX, subCY - SUB_R,
+        '#fbbf24', animDelay * 0.6);
+
+      /* SUB-FACTOR CIRCLE */
+      const subX = subCursor;
+      const subY = SUB_Y;
+      placeNode(canvas, 'circle-node', subX, subY, SUB_R * 2, SUB_R * 2,
+        `<div class="n-text">${esc(sub.text)}</div>`,
+        animDelay);
+      animDelay += DELAY_STEP;
+      subCursor += SUB_R * 2 + subSpacing;
+    });
+
+    /* Position branches under this root */
+    let branchCursor = rootCX - branchWidths.reduce((s,w) => s + w, 0) / 2
+                       - (root.branches.length - 1) * COL_PAD / 2;
+
+    root.branches.forEach((branch, bi) => {
+      const bColor = BRANCH_COLORS[bi % BRANCH_COLORS.length];
+      const bW     = branchWidths[bi];
+      const condCX = branchCursor + bW / 2;
+      const condCY = COND_Y + COND_R;
+
+      /* CURVED LINE: root bottom → condition top */
+      drawCurve(svgLayer,
+        rootCX, ROOT_Y + ROOT_H,
+        condCX, condCY - COND_R,
+        bColor, animDelay * 0.6);
+
+      /* CONDITION CIRCLE */
+      const condX = condCX - COND_R;
+      const condY = COND_Y;
+      placeNode(canvas, 'node-cond', condX, condY, COND_R * 2, COND_R * 2,
+        `<div class="n-label">IF</div><div class="n-text">${esc(branch.condition)}</div>`,
+        animDelay, `border-color:${bColor};`);
+      animDelay += DELAY_STEP;
+
+      /* Position actions under this condition */
+      const actGroupW  = branch.actions.length * ACT_W + (branch.actions.length - 1) * 20;
+      let actCursor    = condCX - actGroupW / 2;
+
+      branch.actions.forEach((act, ai) => {
+        const actCX = actCursor + ACT_W / 2;
+        const actCY = ACT_Y;
+
+        /* CURVED LINE: condition bottom → action top */
+        drawCurve(svgLayer,
+          condCX, condCY + COND_R,
+          actCX,  actCY,
+          '#fdba74', animDelay * 0.6);
+
+        /* ACTION RECT */
+        placeNode(canvas, 'node-action', actCursor, actCY, ACT_W, ACT_H,
+          `<div class="n-label">✔ Action</div><div class="n-text">${esc(act.action)}</div>`,
+          animDelay);
+        animDelay += DELAY_STEP;
+
+        /* FINAL ACTIONS */
+        const diamondSpacing = 20;
+        const diamondGroupW = 2 * DIAMOND_W + diamondSpacing;
+        let diamondCursor = actCX - diamondGroupW / 2;
+        act.finalActions.forEach((finalAct, fi) => {
+          const diamondCX = diamondCursor + DIAMOND_W / 2;
+          const diamondCY = DIAMOND_Y + DIAMOND_H / 2;
+
+          /* CURVED LINE: action bottom → diamond top */
+          drawCurve(svgLayer,
+            actCX, ACT_Y + ACT_H,
+            diamondCX, diamondCY - DIAMOND_H / 2,
+            '#86efac', animDelay * 0.6);
+
+          /* DIAMOND NODE */
+          const diamondX = diamondCursor;
+          const diamondY = DIAMOND_Y;
+          placeNode(canvas, 'diamond-node', diamondX, diamondY, DIAMOND_W, DIAMOND_H,
+            `<div class="n-text">${esc(finalAct.text)}</div>`,
+            animDelay);
+          animDelay += DELAY_STEP;
+          diamondCursor += DIAMOND_W + diamondSpacing;
+        });
+
+        actCursor += ACT_W + 20;
+      });
+
+      branchCursor += bW + COL_PAD;
+    });
+  });
+}
+
+/* ════════════════════════════════════
+   HELPERS
+════════════════════════════════════ */
+function placeNode(parent, cls, x, y, w, h, html, delay, extraStyle = '') {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.style.cssText = `left:${x}px;top:${y}px;width:${w}px;${h?'height:'+h+'px;':''}animation-delay:${delay.toFixed(2)}s;${extraStyle}`;
+  d.innerHTML = html;
+  // for circles, center content
+  if (cls === 'node-cond') {
+    d.style.display = 'flex';
+    d.style.flexDirection = 'column';
+    d.style.alignItems = 'center';
+    d.style.justifyContent = 'center';
+  }
+  parent.appendChild(d);
+}
+
+function drawCurve(svg, x1, y1, x2, y2, color, delay) {
+  const cy1 = y1 + (y2 - y1) * 0.5;
+  const cy2 = y2 - (y2 - y1) * 0.5;
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d', `M${x1},${y1} C${x1},${cy1} ${x2},${cy2} ${x2},${y2}`);
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width','2.5');
+  path.setAttribute('stroke-linecap','round');
+  path.style.opacity = '0';
+  path.style.animation = `fadeIn .5s ${delay.toFixed(2)}s ease forwards`;
+  svg.appendChild(path);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* Inject fadeIn keyframe */
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeIn { from{opacity:0} to{opacity:1} }`;
+document.head.appendChild(style);
+
+/* ════════════════════════════════════
+   LOAD (API ONLY - NO FALLBACK)
+════════════════════════════════════ */
+async function loadTree() {
+  const emptyState = document.getElementById('empty-state');
+  const loadingMsg = document.getElementById('loading-msg');
+  const canvas = document.getElementById('canvas');
+  const svgLayer = document.getElementById('svg-layer');
+
+  async function fetchApi(path) {
+    const response = await fetch(`${API_BASE}${path}`);
+    if (!response.ok) throw new Error(`Failed to fetch ${path}`);
+    return response.json();
+  }
+  
+  try {
+    // First check if data exists
+    const data = await fetchApi('/api/data');
+    
+    // Evaluate whether there is uploaded data
+    let hasData = false;
+    if (Array.isArray(data)) {
+      hasData = data.length > 0;
+    } else if (data && Array.isArray(data.data)) {
+      hasData = data.data.length > 0;
+    } else if (data && typeof data.totalRecords === 'number') {
+      hasData = data.totalRecords > 0;
+    }
+
+    if (!hasData) {
+      loadingMsg.style.display = 'none';
+      emptyState.classList.add('show');
+      canvas.innerHTML = '';
+      svgLayer.innerHTML = '';
+      return;
+    }
+
+    console.log('✅ Data exists. Fetching decision tree...');
+    loadingMsg.style.display = 'flex';
+    emptyState.classList.remove('show');
+    loadingMsg.style.display = 'flex';
+    emptyState.classList.remove('show');
+    
+    const treeData = await fetchApi('/api/decision-tree?mode=ai');
+    console.log("🌳 TREE DATA:", treeData);
+    if (treeData.meta?.generator !== 'ai') {
+      console.warn("⚠️ AI not used, fallback active:", treeData.meta);
+    }
+    
+    // Check if tree has any roots
+    if (treeData.roots && treeData.roots.length > 0) {
+      console.log('✅ Decision tree data received from server:', treeData);
+      renderTree(treeData);
+    } else {
+      console.warn('⚠️ Decision tree is empty. Showing generate prompt.');
+      loadingMsg.style.display = 'none';
+      emptyState.classList.add('show');
+    }
+  } catch(err) {
+    console.error('Error loading tree:', err);
+    document.getElementById('loading-msg').style.display = 'none';
+    emptyState.classList.add('show');
+    emptyState.innerHTML = '<div class="empty-icon">⚠️</div><div class="empty-text">Error generating decision tree. Please try again.</div>';
+  }
+}
+
+loadTree();
+updateZoomLabel();
+</script>
+</body>
+</html>

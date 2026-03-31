@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Nirnay</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #f9fafc; color: #0f1623; margin: 0; padding: 0; }
+    .auth-panel { max-width: 420px; margin: 80px auto; padding: 28px; background: white; border: 1px solid #e6ebf5; border-radius: 14px; box-shadow: 0 10px 30px rgba(15,22,35,0.08); }
+    .auth-title { font-size: 24px; margin-bottom: 12px; }
+    .btn { width: 100%; display: inline-flex; justify-content: center; align-items: center; border-radius: 10px; padding: 10px 14px; border: none; font-size: 14px; cursor: pointer; }
+    .btn-google { background: #ffffff; border: 1px solid #dfe3eb; color: #202124; margin-bottom: 16px; }
+    .btn-primary { background: #1f56ff; color: white; margin-top: 10px; }
+    .form-field { width: 100%; margin-bottom: 12px; }
+    .form-field input { width: 100%; padding: 10px 12px; border: 1px solid #dfe3eb; border-radius: 8px; }
+    .error-msg { color: #d43f3a; font-size: 13px; min-height: 18px; margin-bottom: 8px; }
+    .auth-footer { margin-top: 14px; font-size: 13px; color: #6b7a99; }
+    .auth-footer a { color: #1f56ff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="auth-panel">
+    <div class="auth-title">Sign In</div>
+    <button class="btn btn-google" id="google-login-btn">Continue with Google</button>
+
+    <div class="form-field">
+      <input id="login-email" type="email" placeholder="Email address" required />
+    </div>
+    <div class="form-field">
+      <input id="login-password" type="password" placeholder="Password" required />
+    </div>
+    <div class="error-msg" id="login-error"></div>
+    <button class="btn btn-primary" id="login-submit">Sign In →</button>
+
+    <div class="auth-footer">
+      New here? <a href="signup.html">Create a free account</a>
+    </div>
+  </div>
+
+  <script type="module" src="../assets/js/script.js"></script>
+</body>
+</html>

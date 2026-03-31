@@ -1,0 +1,30 @@
+{
+  "name": "nirnay-protex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sheenan1gans/nirnay-protex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sheenan1gans/nirnay-protex/issues"
+  },
+  "homepage": "https://github.com/sheenan1gans/nirnay-protex#readme",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "multer": "^1.4.5-lts.1",
+    "papaparse": "^5.4.1",
+    "xlsx": "^0.18.5"
+  }
+}

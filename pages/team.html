@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nirnay — Team Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #0D1520;
+  --ink-2:     #1A2740;
+  --ink-3:     #2C3E5A;
+  --saffron:   #E05C1A;
+  --saffron-2: #F2834A;
+  --saffron-pale: #FDF0E8;
+  --amber:     #D4880E;
+  --amber-pale:#FDF6E3;
+  --red:       #C0392B;
+  --red-pale:  #FDECEB;
+  --green:     #0D7A4E;
+  --green-pale:#E3F5EE;
+  --blue:      #2563EB;
+  --blue-pale: #EEF3FF;
+  --slate:     #6B7A99;
+  --slate-2:   #9AA5BE;
+  --mist:      #F5F6FA;
+  --mist-2:    #ECEEF5;
+  --white:     #FFFFFF;
+  --border:    rgba(13,21,32,0.07);
+  --border-2:  rgba(13,21,32,0.12);
+  --sidebar-w: 220px;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--mist);
+  color: var(--ink);
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 240px; height: 240px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='120' cy='120' r='115' stroke='white' stroke-width='0.6' fill='none'/%3E%3Ccircle cx='120' cy='120' r='85' stroke='white' stroke-width='0.4' fill='none'/%3E%3Ccircle cx='120' cy='120' r='55' stroke='white' stroke-width='0.4' fill='none'/%3E%3Ccircle cx='120' cy='120' r='25' stroke='white' stroke-width='0.5' fill='none'/%3E%3Cg stroke='white' stroke-width='0.4'%3E%3Cline x1='120' y1='5' x2='120' y2='235'/%3E%3Cline x1='5' y1='120' x2='235' y2='120'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(45 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(22.5 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(67.5 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(112.5 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(135 120 120)'/%3E%3Cline x1='120' y1='5' x2='120' y2='235' transform='rotate(157.5 120 120)'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.sidebar-logo {
+  padding: 1.25rem 1.25rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 0.5rem;
+}
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+}
+.logo-text span { color: var(--saffron-2); }
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  padding: 0.75rem 1.25rem 0.4rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.6rem 1.25rem;
+  margin: 1px 0.5rem;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.16s;
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+
+.nav-item.active {
+  background: rgba(224,92,26,0.18);
+  color: var(--white);
+  font-weight: 500;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--saffron-2);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-icon { font-size: 15px; width: 18px; flex-shrink: 0; }
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--red);
+  color: white;
+  padding: 2px 7px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.nav-badge-amber {
+  background: var(--amber);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 1rem 1.25rem;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--saffron), var(--amber));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 13px; font-weight: 500; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.topbar-left { display: flex; flex-direction: column; gap: 1px; }
+
+.topbar-greeting {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.topbar-date { font-size: 12px; color: var(--slate); }
+.topbar-company { font-size: 12px; color: var(--ink-2); margin-top: 4px; display: block; }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.topbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.16s;
+  border: none;
+}
+
+.topbar-btn-ghost {
+  background: var(--mist);
+  color: var(--ink-2);
+  border: 1px solid var(--border-2);
+}
+.topbar-btn-ghost:hover { background: var(--mist-2); }
+
+.topbar-btn-accent {
+  background: var(--saffron);
+  color: white;
+}
+.topbar-btn-accent:hover { background: #c7511a; transform: translateY(-1px); }
+
+.notif-btn {
+  position: relative;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--mist);
+  border: 1px solid var(--border-2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.16s;
+}
+.notif-btn:hover { background: var(--mist-2); }
+
+/* ── CONTENT ── */
+.content {
+  padding: 1.5rem 2rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.content > .card:nth-child(5),
+.content > .card:nth-child(6) {
+  grid-column: 1 / -1;
+}
+
+/* ── GRID ROW ── */
+.grid-row {
+  display: grid;
+  gap: 1.25rem;
+}
+.grid-2-1 { grid-template-columns: 2fr 1fr; }
+.grid-1-1 { grid-template-columns: 1fr 1fr; }
+.grid-3   { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  animation: fade-up 0.5s ease both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.card-subtitle { font-size: 12px; color: var(--slate-2); margin-top: 1px; }
+
+.card-action {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--saffron);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.16s;
+}
+.card-action:hover { background: var(--saffron-pale); }
+
+.card-body { padding: 1rem 1.25rem; }
+
+/* ── FORM INPUTS ── */
+input[type="text"], input[type="email"], input[type="password"], select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  background: var(--white);
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  outline: none;
+  transition: border 0.16s;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+  border-color: var(--saffron);
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.16s;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--saffron);
+  color: white;
+}
+.btn-primary:hover { background: #c7511a; transform: translateY(-1px); }
+
+.btn-ghost {
+  background: var(--mist);
+  color: var(--ink-2);
+  border: 1px solid var(--border-2);
+}
+.btn-ghost:hover { background: var(--mist-2); }
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+  font-size: 12px;
+  padding: 0.4rem 0.8rem;
+}
+.btn-danger:hover { background: var(--red-pale); }
+
+/* ── MODAL ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,21,32,0.28);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+}
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 14px 27px rgba(13,21,32,0.22);
+  padding: 1rem;
+  position: relative;
+}
+
+.modal-header {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 1rem;
+  color: var(--ink);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--slate-2);
+  padding: 0;
+}
+.modal-close:hover { color: var(--ink); }
+
+/* ── MEMBER & TASK ROWS ── */
+.member-row, .task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  cursor: default;
+}
+.member-row:last-child, .task-row:last-child { border-bottom: none; }
+.member-row:hover, .task-row:hover { background: var(--mist); margin: 0 -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; border-radius: 6px; }
+
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--saffron), var(--amber));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.member-info, .task-info { flex: 1; min-width: 0; }
+.member-name, .task-name { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.member-meta, .task-meta { font-size: 11px; color: var(--slate-2); margin-top: 2px; }
+
+.dept-badge, .status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.dept-ops { background: var(--blue-pale); color: var(--blue); }
+.dept-sup { background: var(--amber-pale); color: var(--amber); }
+.dept-prod { background: var(--green-pale); color: var(--green); }
+
+.status-pending { background: var(--red-pale); color: var(--red); }
+.status-done { background: var(--green-pale); color: var(--green); }
+
+/* ── WORKLOAD BARS ── */
+.workload-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.workload-item:last-child { border-bottom: none; }
+
+.workload-label { font-size: 12px; font-weight: 600; color: var(--ink-2); min-width: 80px; }
+.workload-bar { flex: 1; height: 6px; background: var(--mist-2); border-radius: 3px; overflow: hidden; }
+.workload-fill { height: 100%; border-radius: 3px; }
+.workload-count { font-size: 12px; font-weight: 600; color: var(--ink); min-width: 28px; text-align: right; }
+
+/* ── ACTIVITY ROWS ── */
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+
+.activity-text { font-size: 13px; color: var(--ink-2); line-height: 1.3; flex: 1; }
+.activity-time { font-size: 11px; color: var(--slate-2); white-space: nowrap; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--slate-2);
+  gap: 6px;
+  font-size: 13px;
+}
+.empty-icon { font-size: 28px; opacity: 0.4; }
+
+/* ── SCROLLBAR ── */
+.main::-webkit-scrollbar { width: 5px; }
+.main::-webkit-scrollbar-track { background: transparent; }
+.main::-webkit-scrollbar-thumb { background: var(--mist-2); border-radius: 10px; }
+.main::-webkit-scrollbar-thumb:hover { background: var(--slate-2); }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+      <circle cx="16" cy="16" r="5" fill="#E05C1A"/>
+      <g stroke="rgba(255,255,255,0.4)" stroke-width="1">
+        <line x1="16" y1="2" x2="16" y2="7"/><line x1="16" y1="25" x2="16" y2="30"/>
+        <line x1="2" y1="16" x2="7" y2="16"/><line x1="25" y1="16" x2="30" y2="16"/>
+      </g>
+    </svg>
+    <span class="logo-text">Nirn<span>ay</span></span>
+  </div>
+
+  <div class="sidebar-section-label">Overview</div>
+  <a class="nav-item" href="dashboard.html">
+    <span class="nav-icon">⬛</span> Dashboard
+  </a>
+
+  <div class="sidebar-section-label">Feedback</div>
+  <a href="nirnay-upload.html" class="nav-item">
+    <span class="nav-icon">📤</span> Upload Data
+  </a>
+
+  <div class="sidebar-section-label">Decisions</div>
+  <a class="nav-item" href="decisiontree.html">
+    <span class="nav-icon">🌿</span> Decision Trees
+  </a>
+
+  <div class="sidebar-section-label">Workspace</div>
+  <a class="nav-item active" href="team.html">
+    <span class="nav-icon">👥</span> Team
+  </a>
+
+
+  
+</aside>
+
+<!-- ════════════ MAIN ════════════ -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+
+    <div class="topbar-right">
+      <button class="topbar-btn topbar-btn-ghost" onclick="openAddMemberModal()">+ Add Member</button>
+      <button class="topbar-btn topbar-btn-accent" onclick="generateActions()">Generate Actions</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Team Members Card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Team Members</div>
+          <div class="card-subtitle">Manage your team</div>
+        </div>
+      </div>
+      <div class="card-body" id="team-container">
+        <div class="empty-state">
+          <div class="empty-icon">👥</div>
+          <div>No team members yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Workload Card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Department Workload</div>
+          <div class="card-subtitle">Task distribution</div>
+        </div>
+      </div>
+      <div class="card-body" id="workload-container">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <div>Create tasks to see workload</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Task Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Create Task</div>
+      </div>
+      <div class="card-body">
+        <div style="margin-bottom:0.75rem;">
+          <input type="text" id="task-title" placeholder="Task title" />
+        </div>
+        <div style="margin-bottom:0.75rem;">
+          <select id="task-dept">
+            <option value="Operations">Operations</option>
+            <option value="Support">Support</option>
+            <option value="Product">Product</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addTask()" style="width:100%;">Create Task</button>
+      </div>
+    </div>
+
+    <!-- Active Tasks Card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Active Tasks</div>
+          <div class="card-subtitle">All pending and done tasks</div>
+        </div>
+      </div>
+      <div class="card-body" id="tasks-container">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div>No tasks yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generated Actions Card (full width) -->
+    <div class="card" style="grid-column:1/-1;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Generated Actions</div>
+          <div class="card-subtitle">Actions from your feedback</div>
+        </div>
+      </div>
+      <div class="card-body" id="actions-container">
+        <div class="empty-state">
+          <div class="empty-icon">⚡</div>
+          <div>Upload feedback then generate actions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Log Card (full width) -->
+    <div class="card" style="grid-column:1/-1;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Activity Log</div>
+          <div class="card-subtitle">Recent team changes</div>
+        </div>
+      </div>
+      <div class="card-body" id="activity-container">
+        <div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <div>Activity will appear here</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ════════════ ADD MEMBER MODAL ════════════ -->
+<div class="modal-backdrop" id="member-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeMemberModal()">×</button>
+    <div class="modal-header">Add Team Member</div>
+    <input type="text" id="member-name" placeholder="Full Name" />
+    <select id="member-role">
+      <option value="Admin">Admin</option>
+      <option value="Analyst">Analyst</option>
+      <option value="Viewer">Viewer</option>
+    </select>
+    <select id="member-dept">
+      <option value="Operations">Operations</option>
+      <option value="Support">Support</option>
+      <option value="Product">Product</option>
+    </select>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1rem;">
+      <button class="btn btn-ghost" onclick="closeMemberModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMember()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../assets/js/script.js"></script>
+<script>
+// ════════════ AUTH & UTILS ════════════
+function requireAuth() {
+  const email = localStorage.getItem('userEmail');
+  if (!email) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return email;
+}
+
+function normalizeUserName(email) {
+  if (!email || !email.includes('@')) return 'User';
+  const local = String(email).split('@')[0].toLowerCase();
+  let part = local.split(/[\.\-_\+]/).find((x) => x && /[a-z]/.test(x)) || local;
+  part = part.replace(/[0-9]/g, '').trim();
+  if (!part) return 'User';
+  const words = part.split(/\s+/).filter(Boolean);
+  const clean = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  return clean || 'User';
+}
+
+function getUserName() {
+  const email = localStorage.getItem('userEmail');
+  const stored = localStorage.getItem('userName');
+  if (stored && stored !== 'User') return stored;
+  if (!email) return 'User';
+  const name = normalizeUserName(email);
+  localStorage.setItem('userName', name);
+  return name;
+}
+
+function getCompanyName() {
+  return 'Your Company';
+}
+
+// ════════════ DATA MANAGEMENT ════════════
+function getKey(suffix) {
+  const email = localStorage.getItem('userEmail');
+  return `${email}_${suffix}`;
+}
+
+function getData(suffix) {
+  try {
+    return JSON.parse(localStorage.getItem(getKey(suffix))) || [];
+  } catch {
+    return [];
+  }
+}
+
+function setData(suffix, data) {
+  localStorage.setItem(getKey(suffix), JSON.stringify(data));
+}
+
+function addActivity(message) {
+  const activity = getData('activity');
+  activity.unshift({
+    message,
+    timestamp: new Date().toLocaleString(),
+    id: Date.now()
+  });
+  setData('activity', activity.slice(0, 20));
+}
+
+// ════════════ MODAL MANAGEMENT ════════════
+function openAddMemberModal() {
+  document.getElementById('member-modal').classList.add('show');
+  document.getElementById('member-name').focus();
+}
+
+function closeMemberModal() {
+  document.getElementById('member-modal').classList.remove('show');
+  document.getElementById('member-name').value = '';
+  document.getElementById('member-role').value = 'Analyst';
+  document.getElementById('member-dept').value = 'Operations';
+}
+
+// ════════════ TEAM MEMBER MANAGEMENT ════════════
+function saveMember() {
+  const name = document.getElementById('member-name').value.trim();
+  const role = document.getElementById('member-role').value;
+  const dept = document.getElementById('member-dept').value;
+
+  if (!name) {
+    alert('Please enter a member name');
+    return;
+  }
+
+  const members = getData('teamMembers');
+  members.push({
+    id: Date.now(),
+    name,
+    role,
+    department: dept
+  });
+  setData('teamMembers', members);
+  addActivity(`Added team member: ${name}`);
+  renderTeam();
+  closeMemberModal();
+}
+
+function deleteMember(id) {
+  if (!confirm('Remove this team member?')) return;
+  const members = getData('teamMembers').filter(m => m.id !== id);
+  setData('teamMembers', members);
+  addActivity('Removed a team member');
+  renderTeam();
+  renderWorkload();
+}
+
+function renderTeam() {
+  const container = document.getElementById('team-container');
+  const members = getData('teamMembers');
+
+  if (!members.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div>No team members yet</div></div>`;
+    return;
+  }
+
+  const deptClass = { 'Operations': 'dept-ops', 'Support': 'dept-sup', 'Product': 'dept-prod' };
+
+  container.innerHTML = members.map(m => `
+    <div class="member-row">
+      <div class="avatar">${m.name.charAt(0).toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">${m.name}</div>
+        <div class="member-meta">${m.role} · <span class="dept-badge ${deptClass[m.department]}">${m.department}</span></div>
+      </div>
+      <button class="btn btn-danger" onclick="deleteMember(${m.id})">Remove</button>
+    </div>
+  `).join('');
+}
+
+// ════════════ TASK MANAGEMENT ════════════
+function addTask() {
+  const title = document.getElementById('task-title').value.trim();
+  const dept = document.getElementById('task-dept').value;
+
+  if (!title) {
+    alert('Please enter a task title');
+    return;
+  }
+
+  const tasks = getData('tasks');
+  tasks.push({
+    id: Date.now(),
+    title,
+    department: dept,
+    status: 'pending',
+    created: new Date().toLocaleDateString()
+  });
+  setData('tasks', tasks);
+  addActivity(`Created task: ${title}`);
+  document.getElementById('task-title').value = '';
+  renderTasks();
+  renderWorkload();
+}
+
+function toggleTaskStatus(id) {
+  const tasks = getData('tasks');
+  const task = tasks.find(t => t.id === id);
+  if (task) {
+    task.status = task.status === 'pending' ? 'done' : 'pending';
+    setData('tasks', tasks);
+    addActivity(`Marked task as ${task.status}: ${task.title}`);
+    renderTasks();
+    renderWorkload();
+  }
+}
+
+function deleteTask(id) {
+  if (!confirm('Delete this task?')) return;
+  const tasks = getData('tasks').filter(t => t.id !== id);
+  setData('tasks', tasks);
+  addActivity('Deleted a task');
+  renderTasks();
+  renderWorkload();
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  const tasks = getData('tasks');
+
+  if (!tasks.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div>No tasks yet</div></div>`;
+    return;
+  }
+
+  const deptClass = { 'Operations': 'dept-ops', 'Support': 'dept-sup', 'Product': 'dept-prod' };
+
+  container.innerHTML = tasks.map(t => `
+    <div class="task-row">
+      <input type="checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id})" />
+      <div class="task-info" style="flex:1;">
+        <div class="task-name" style="${t.status === 'done' ? 'text-decoration:line-through;color:var(--slate-2);' : ''}">${t.title}</div>
+        <div class="task-meta"><span class="dept-badge ${deptClass[t.department]}">${t.department}</span></div>
+      </div>
+      <span class="status-badge ${t.status === 'pending' ? 'status-pending' : 'status-done'}">${t.status}</span>
+      <button class="btn btn-danger" onclick="deleteTask(${t.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// ════════════ WORKLOAD TRACKING ════════════
+function renderWorkload() {
+  const container = document.getElementById('workload-container');
+  const tasks = getData('tasks');
+
+  const workload = {
+    'Operations': tasks.filter(t => t.department === 'Operations').length,
+    'Support': tasks.filter(t => t.department === 'Support').length,
+    'Product': tasks.filter(t => t.department === 'Product').length
+  };
+
+  const total = Object.values(workload).reduce((a, b) => a + b, 0);
+  const max = Math.max(...Object.values(workload), 1);
+
+  if (total === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>Create tasks to see workload</div></div>`;
+    return;
+  }
+
+  const colorMap = { 'Operations': 'var(--blue)', 'Support': 'var(--amber)', 'Product': 'var(--green)' };
+
+  container.innerHTML = Object.entries(workload).map(([dept, count]) => `
+    <div class="workload-item">
+      <div class="workload-label">${dept}</div>
+      <div class="workload-bar">
+        <div class="workload-fill" style="width:${(count / max) * 100}%;background:${colorMap[dept]};"></div>
+      </div>
+      <div class="workload-count">${count}</div>
+    </div>
+  `).join('');
+}
+
+// ════════════ ACTION GENERATION ════════════
+function generateActions() {
+  const feedback = getData('feedback');
+  if (feedback.length < 2) {
+    alert('Upload at least 2 feedback records first');
+    return;
+  }
+
+  const suggestions = [
+    'Improve delivery speed and response times',
+    'Enhance product or service quality',
+    'Strengthen customer support team',
+    'Train staff on service excellence'
+  ];
+
+  const newActions = suggestions.map((text, idx) => ({
+    id: Date.now() + idx,
+    text,
+    created: new Date().toLocaleDateString()
+  }));
+
+  setData('actions', newActions);
+  addActivity('Generated actions from feedback');
+  renderActions();
+}
+
+function deleteAction(id) {
+  const actions = getData('actions').filter(a => a.id !== id);
+  setData('actions', actions);
+  renderActions();
+}
+
+function renderActions() {
+  const container = document.getElementById('actions-container');
+  const actions = getData('actions');
+
+  if (!actions.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚡</div><div>Upload feedback then generate actions</div></div>`;
+    return;
+  }
+
+  container.innerHTML = actions.map(a => `
+    <div class="issue-row">
+      <div style="font-size:16px;flex-shrink:0;">✓</div>
+      <div style="flex:1;min-width:0;">
+        <div class="issue-name">${a.text}</div>
+        <div class="issue-source">${a.created}</div>
+      </div>
+      <button class="btn btn-danger" onclick="deleteAction(${a.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// ════════════ ACTIVITY LOG ════════════
+function renderActivity() {
+  const container = document.getElementById('activity-container');
+  const activity = getData('activity');
+
+  if (!activity.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div>Activity will appear here</div></div>`;
+    return;
+  }
+
+  container.innerHTML = activity.slice(0, 10).map(a => `
+    <div class="activity-item">
+      <div class="activity-text">${a.message}</div>
+      <div class="activity-time">${a.timestamp}</div>
+    </div>
+  `).join('');
+}
+
+// ════════════ PAGE INIT ════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const email = requireAuth();
+  if (!email) return;
+
+  const name = getUserName();
+  const company = getCompanyName();
+  
+  document.getElementById('topbar-greeting').textContent = `Good morning, ${name} 👋`;
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('topbar-company').textContent = `Company Name: ${company}`;
+  
+  document.getElementById('sidebar-name').textContent = name;
+  document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
+
+  renderTeam();
+  renderTasks();
+  renderWorkload();
+  renderActions();
+  renderActivity();
+});
+</script>
+</body>
+</html>
