@@ -27,6 +27,9 @@ if (!AI_API_KEY) {
 console.log("GROQ KEY:", process.env.GROQ_API_KEY);
 console.log("AI PROVIDER:", AI_PROVIDER);
 console.log("BASE URL:", AI_BASE_URL);
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
 
 
 process.on('uncaughtException', err => {
