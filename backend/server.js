@@ -42,7 +42,14 @@ process.on('unhandledRejection', (reason, promise) => {
   // do not exit to keep server alive
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+  'https://nirnay-frontend.vercel.app',
+  'http://localhost:5000'
+  ], // add your Vercel domain
+  methods: ['GET','POST'],
+  credentials: true
+}));
 app.use(express.json());
 
 const sheetsRoutes = require('./routes/sheets');
