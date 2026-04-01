@@ -42,11 +42,21 @@ process.on('unhandledRejection', (reason, promise) => {
   // do not exit to keep server alive
 });
 
+const allowedOrigins = [
+  'https://nirnaybinarybiryani.vercel.app', // your Vercel frontend
+  'http://localhost:3000'                   // optional, for local dev
+];
+
 app.use(cors({
-  origin: [
-  'https://nirnay-frontend.vercel.app',
-  'http://localhost:5000'
-  ], // add your Vercel domain
+  origin: function(origin, callback){
+    // allow requests with no origin (like Postman or server-to-server)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET','POST'],
   credentials: true
 }));
